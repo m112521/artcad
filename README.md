@@ -1,8 +1,6 @@
 # artcad robot test
 
-
-
-[Инструкция ](https://drive.google.com/file/d/178sKDBuyUfna8KVa8PEs0qtbKnR5mvym/view?usp=sharing)
+[Инструкция ](https://drive.google.com/file/d/1U5eLFzV6H8NR3o3LD1IKxW2EKsxH2cex/view?usp=sharing)
 
 [BOM](https://docs.google.com/spreadsheets/d/125n-HQTKvdkcZM3G1kUShieqFLzIgVuq7u4Gp4bA2KU/edit?usp=sharing)
 
