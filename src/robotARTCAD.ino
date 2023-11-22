@@ -37,7 +37,7 @@ void setup(){
   for (int i = 4; i < 8; i++) {     
     pinMode(i, OUTPUT);
   }
-  pinMode(RELAY_PIN, INPUT);
+  pinMode(RELAY_PIN, OUTPUT);
 }
 
 void loop(){
