@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>WS</title>
+    </head>
+    <body>
+        <button id="blob">Stop WS and Download Imgs</button>
+        <form action="" onsubmit="sendMessage(event)">
+            <input type="text" id="messageText" autocomplete="off"/>
+            <button>Send</button>
+        </form>
+        <canvas id="stream" style="width:640px;height:480px"></canvas>
+ 
+        <button id="f-btn" class="btn">F</button>
+        <button id="b-btn" class="btn">B</button>
+        <button id="l-btn" class="btn">L</button>
+        <button id="r-btn" class="btn">R</button>
+ 
+        <script>
+            const cnv = document.querySelector("#stream");
+            let ws = new WebSocket("ws://192.168.193.41:8000/ws");
+           
+            const rightBtn = document.querySelector('#r-btn');
+            const leftBtn = document.querySelector('#l-btn');
+            const forwardBtn = document.querySelector('#f-btn');
+ 
+            let blobs = [];
+            let dir = "";
+            const b = document.querySelector('#blob');
+ 
+            b.addEventListener('click', () => {
+                ws.close();
+                console.log(blobs.length);
+ 
+                for (let i = 0; i < blobs.length; i++) {
+                    delayedDownload(i)
+                }
+            });
+ 
+            rightBtn.addEventListener('click', () => {
+                dir = `R`;
+                ws.send("L");
+            });
+ 
+            leftBtn.addEventListener('click', () => {
+                dir = `L`;
+                ws.send("R");
+            });
+ 
+            forwardBtn.addEventListener('click', () => {
+                dir = `F`;
+                ws.send("F");
+            });
+ 
+            function delayedDownload(i) {
+                setTimeout(() => {
+                    let link = document.createElement('a');
+                    link.download = `${i}_${blobs[i].d}.jpg`;
+                    link.href = URL.createObjectURL(blobs[i].b);
+                    link.click();
+                    URL.revokeObjectURL(link.href);
+                }, 500 * i);
+            }
+ 
+            ws.onmessage = function(event) {
+                // console.log(event.data)
+                renderImage(cnv, event.data);
+                ws.send(0);
+            };
+            function sendMessage(event) {
+                var input = document.getElementById("messageText")
+                ws.send(input.value);
+                input.value = '';
+                event.preventDefault();
+            }
+ 
+            function renderImage(canvas, blob) {
+                const ctx = canvas.getContext('2d')
+                    const img = new Image();
+                    img.onload = (event) => {
+                        URL.revokeObjectURL(event.target.src) // Once it loaded the resource, then you can free it at the beginning.
+                        ctx.drawImage(event.target, 0, 0, 200, 100)
+                    }
+                    img.src = URL.createObjectURL(blob);
+                    if (dir != '') {
+                        blobs.push({b: blob, d: dir});
+                        dir = '';
+                    }
+                   
+                   
+            }
+        </script>
