@@ -1,46 +1,30 @@
-# pip3 install pynput
-
+#pip3 install pynput
+import serial
+import time
 from pynput import keyboard
 from time import sleep
 
-
-def stop():
-    pass
-
-
-def backward(x, t):
-    pass
-
-
-def forward(x, t):
-    pass
-    # pwmA.ChangeDutyCycle(x)
-    # GPIO.output(In2A, GPIO.HIGH)
-    # GPIO.output(In1A, GPIO.LOW)
-
-    # sleep(t)
-    # pwmA.ChangeDutyCycle(0)
-    # pwmB.ChangeDutyCycle(0)
-
-
-def turn_left(x, t):
-    pass
-
-
-def turn_right(x, t):
-    pass
-
+ser = serial.Serial('/dev/ttyUSB0', 9600)
+##ser.reset_input_buffer()
 
 def on_press(key):
     global steer
     try:
-        #print('alphanumeric key {0} pressed'.format(key.char))
+        print('alphanumeric key {0} pressed'.format(key.char))
         if key.char == 'w':
-            forward(100, 0.3)
+            ser.write(b'0')
         elif key.char == 'd':
-            turn_left(100, 0.2)
+            ser.write(b'1')
         elif key.char == 'a':
-            turn_right(100, 0.2)
+            ser.write(b'2')
+        elif key.char == 's':
+            ser.write(b'3')
+        elif key.char == 'x':
+            ser.write(b'4')
+        elif key.char == 'backspace':
+            ser.write(b'5')
+        elif key.char == 'enter':
+            ser.write(b'6')
 
     except AttributeError:
         print('special key {0} pressed'.format(key))
@@ -55,5 +39,5 @@ with keyboard.Listener(on_press=on_press, on_release=on_release) as listener:
     listener.join()
 
 # ...or, in a non-blocking fashion:
-listener = keyboard.Listener(on_press=on_press, on_release=on_release)
-listener.start()
+#listener = keyboard.Listener(on_press=on_press, on_release=on_release)
+#listener.start()
