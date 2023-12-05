@@ -1,53 +1,145 @@
 # artcad robot test
 
-[Инструкция ](https://drive.google.com/file/d/1U5eLFzV6H8NR3o3LD1IKxW2EKsxH2cex/view?usp=sharing)
+### Plan B1: готовый PCB-пульт
 
-[BOM](https://docs.google.com/spreadsheets/d/125n-HQTKvdkcZM3G1kUShieqFLzIgVuq7u4Gp4bA2KU/edit?usp=sharing)
+Все те же радиомодули, но без проводов на пульте управления. Пульт отправляет на робота значения с джойстика (X, Y - от 0 до 1024), тублера (0 или 1), потенциометра (от 0 до 1024), кнопки (0 или 1).
 
-Робот и пульт управления:
+![245615045-826f48f7-1a43-4177-9969-16ad2d988945](https://github.com/m112521/artcad/assets/85460283/64794495-4f4d-4c0c-aaf0-b312e1e6b7e7)
 
-![Bot](media/botAndJoystick.jpg)
+Пример кода на роботе:
 
-Робот (вид сверху):
+``` c++
+// read from data[]
+```
 
-![Bot](media/botTop.jpg)
 
-Пульт управления (вид сверху):
 
-![Bot](media/joystickTop.jpg)
 
-Масса робота:
 
-![Bot](media/botMass.jpg)
+### Plan B2: Raspberry Pi 
 
-Робот с нагрузкой:
+Raspberry Pi подключается к сети Wi-Fi. Питается от пауэрбанка по MicroUSB. 
+Arduino Uno подключается к Raspberry Pi по Serial (через провод USB A-B).
 
-![Bot](media/botOverload.jpg)
+По Wi-Fi с клиента (с другого компьютера в этой сети при помощи клавиатуры и кнопок WADS) на Raspberry Pi поступает команда (например, ‘w’, ‘a, ‘d’; ‘s’), а далее передается по Serial на Arduino.
 
-Робот и нагрузка:
+В качестве клиента может выступать:
 
-![Bot](media/loadAndBotTop.jpg)
+- VNC - удаленный доступ к Raspberry Pi, где запускается скрипт Python, считывающий нажатие клавиш и отправляющий соответствующую команду на Arduino по Serial. 
+- JS WebSocket - на Raspberry Pi поднимается WS-сервер, а клиентов может выступать браузер на другом компе. В браузере открывается страница index.html с кнопками. 
 
-Масса нагрузки:
+Размеры дополнительных блоков железа (коробка с Raspberry Pi и пауэрбанк; синим обозначено пространство под провода USB A/B и Micro):
 
-![Bot](media/loadMass.jpg)
+![box_size](https://github.com/m112521/artcad/assets/85460283/b7ce1243-107c-43f0-b6d2-4ef28c3de404)
 
-Движение по горизонтальной поверхности с перегрузкой:
 
-https://github.com/m112521/artcad/assets/85460283/55c60170-c797-462b-ba0b-98f8488edfcf
+Пример подключения к реальному роботу (1 - пауэрбанк; 2 - микрокомпьютер Rapberry Pi с Wi-Fi; 3 - робот на базе Arduino Uno и Motor Shield):
 
-Движение по горизонтальной поверхности с предельной нагрузкой:
+![Frame 20](https://github.com/m112521/artcad/assets/85460283/9b6c4264-23b7-478a-8713-0fae6668f08c)
 
-https://github.com/m112521/artcad/assets/85460283/2eabe62e-8616-49c1-b112-683721394c89
+[контур и отверстия коробки от Raspberry Pi](https://github.com/m112521/artcad/blob/rpi-rc/CAD/rpibox_footprint.dxf)
 
-Прохождение зефира:
 
-https://github.com/m112521/artcad/assets/85460283/a5ff38d2-dbe4-409b-b31a-4a8745c51eb8
+Какие сигналы (символы) прилетают на Arduino при нажатии на соответствующую кнопку (первый столбец) на клавиатуре:
 
-Подъем на мост без нагрузки:
+| Кнопка на клавиатуре | Символ на Arduino |
+|----------------------|-------------------|
+| w                    | 0                 |
+| d                    | 1                 |
+| a                    | 2                 |
+| s                    | 3                 |
+| x                    | 4                 |
+| backspace            | 5                 |
+| enter                | 6                 |
 
-https://github.com/m112521/artcad/assets/85460283/8976cd7c-c456-4580-8c3a-efa5c510ec77
+Пример обработки сигнала на Arduino для управления направлением движения робота:
 
-Подъем на мост с нагрузкой:
+```c++
+#define SPEED_1      5 
+#define DIR_1        4
+ 
+#define SPEED_2      6
+#define DIR_2        7
 
-https://github.com/m112521/artcad/assets/85460283/569532c0-12af-46c1-a7ed-e49c4eb4b4a3
+int command = '0';
+bool weaponState = false;
+
+void setup(){
+  Serial.begin(9600);
+
+  for (int i = 4; i < 8; i++) {     
+    pinMode(i, OUTPUT);
+  }
+}
+
+void loop(){
+   if (Serial.available() > 0) {
+      command = (Serial.read()); 
+      switch (command) {
+        case '0': {
+          digitalWrite(DIR_1, LOW); // set direction
+          analogWrite(SPEED_1, 255); // set speed
+
+          digitalWrite(DIR_2, LOW); // set direction
+          analogWrite(SPEED_2, 255); // set speed
+
+          break;
+        }
+        case '3': {
+          digitalWrite(DIR_1, HIGH); 
+          analogWrite(SPEED_1, 255); 
+
+          digitalWrite(DIR_2, HIGH); 
+          analogWrite(SPEED_2, 255); 
+
+          break;
+        }
+        case '1': { 
+          digitalWrite(DIR_1, HIGH); 
+          analogWrite(SPEED_1, 255);
+
+          digitalWrite(DIR_2, LOW); 
+          analogWrite(SPEED_2, 255); 
+
+          break;
+        }
+        case '2': { 
+          digitalWrite(DIR_1, LOW); 
+          analogWrite(SPEED_1, 255); 
+
+          digitalWrite(DIR_2, HIGH); 
+          analogWrite(SPEED_2, 255);
+          
+          break;
+        }
+        case '4': { // stop motors
+          analogWrite(SPEED_1, 0); 
+          analogWrite(SPEED_2, 0);  
+          break;
+        }
+        case '6': {
+          // turn on/off orudie here
+          weaponState = !weaponState;
+        }
+      }
+  }
+}
+```
+
+### Plan B3: ИК-пульт
+
+К роботу нужно добавить ИК-датчик, а управление осуществлять с ИК-пульта (как от телевизора). 
+
+Преимущества:
+
+- почти самый простой способ;
+- много кнопок на пульте.
+
+
+Недостатки:
+
+- пульт должен быть направлен на датчик;
+- низкая скорость отклика.
+
+
+
