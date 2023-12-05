@@ -111,7 +111,7 @@ void loop(){
 }
 ```
 
-
+---
 
 ### Plan B2: Raspberry Pi 
 
@@ -229,6 +229,7 @@ void loop(){
 ```
 [VNC viewer для подключения к Raspberry Pi](https://www.realvnc.com/en/connect/download/viewer/)
 
+---
 
 ### Plan B3: ИК-пульт
 
@@ -250,6 +251,106 @@ void loop(){
 - пульт должен быть направлен на датчик;
 - низкая скорость отклика.
 
+
+
+Кнопки на пульте, использованные в коде ниже:
+'+' - 21
+'-' - 7
+'Play/Pause' - 67
+'CH+' - 71
+'CH-' - 69
+
+Датчик и пульт:
+
+![ir](https://github.com/m112521/artcad/assets/85460283/e5625183-21dc-4d8e-b65e-68d43e9d4b4b)
+
+
+Подключение ИК-датчика (сам датчик может выглядить по-другому, но ножки у него такие же SVG (или S_-) в таком же порядке):
+
+![sensor](https://github.com/m112521/artcad/assets/85460283/41f17979-bc23-41dc-b6f9-1338ad1a18e8)
+
+
+
+Пример управлением движения роботы при помощи ИК-пульта:
+
+```c++
+#include <IRremote.hpp>
+
+#define IR_RECEIVE_PIN 0
+#define IR_BUTTON_PLUS 21
+#define IR_BUTTON_MINUS 7
+#define IR_BUTTON_CH_PLUS 71
+#define IR_BUTTON_CH_MINUS 69
+#define IR_BUTTON_PLAY_PAUSE 67
+
+#define SPEED_1      5 
+#define DIR_1        4
+ 
+#define SPEED_2      6
+#define DIR_2        7
+
+void setup(){
+  Serial.begin(9600);
+  IrReceiver.begin(IR_RECEIVE_PIN);
+
+  for (int i = 4; i < 8; i++) {     
+    pinMode(i, OUTPUT);
+  }
+}
+
+void loop(){
+   if (IrReceiver.decode()) {
+      IrReceiver.resume(); // Enable receiving of the next value
+      int command = IrReceiver.decodedIRData.command;
+      
+      switch (command) {
+        case IR_BUTTON_PLUS: {
+          digitalWrite(DIR_1, LOW); // set direction
+          analogWrite(SPEED_1, 255); // set speed
+
+          digitalWrite(DIR_2, LOW); // set direction
+          analogWrite(SPEED_2, 255); // set speed
+
+          break;
+        }
+        case IR_BUTTON_MINUS: {
+          digitalWrite(DIR_1, HIGH); // set direction
+          analogWrite(SPEED_1, 255); // set speed
+
+          digitalWrite(DIR_2, HIGH); // set direction
+          analogWrite(SPEED_2, 255); // set speed
+
+          break;
+        }
+        case IR_BUTTON_CH_PLUS: { // stop mototrs
+          digitalWrite(DIR_1, HIGH); // set direction
+          analogWrite(SPEED_1, 255); // set speed
+
+          digitalWrite(DIR_2, LOW); // set direction
+          analogWrite(SPEED_2, 255); // set speed
+
+          break;
+        }
+        case IR_BUTTON_CH_MINUS: { 
+          digitalWrite(DIR_1, LOW); // set direction
+          analogWrite(SPEED_1, 255); // set speed
+
+          digitalWrite(DIR_2, HIGH); // set direction
+          analogWrite(SPEED_2, 255); // set speed
+          
+          break;
+        }
+        case IR_BUTTON_PLAY_PAUSE: { // stop mototrs
+          analogWrite(SPEED_1, 0); 
+          analogWrite(SPEED_2, 0);  
+          break;
+        }
+      }
+  }
+}
+```
+
+---
 
 ### Plan B4: пульт управления на проводе
 
