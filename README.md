@@ -392,9 +392,51 @@ void loop(){
 Недостатки:
 - провод(а) напрямую подключен к роботу.
 
-Выглядит это [так](https://www.flickr.com/photos/154901226@N03/33853164778/) или [так](https://myrobot.ru/news/images_2022/eurobot-2022_2.jpg).
+Готовый пульт (2 джойстика, потенциометр, тумблер), который нужно только подключить к плате робота напрямую через длинный провод (длина=3.5 м):
 
-(скоро здесь появится описание готового пульта с проводом, котрый вы сможете адаптировать под своего робота)
+![photo_5443067876366995853_y](https://github.com/m112521/artcad/assets/85460283/887bc747-cac0-4e26-817f-22d936aabf26)
+
+
+Управление выглядит примерно [так](https://www.flickr.com/photos/154901226@N03/33853164778/) или [так](https://myrobot.ru/news/images_2022/eurobot-2022_2.jpg).
+
+Обладателям Mototr Shield Plus(!) нужно убрать джамперы, которые обведены на картинке ниже:
+
+![jump](https://github.com/m112521/artcad/assets/85460283/9c75b015-97e1-4b8b-a87a-0c29548d83ed)
+
+
+Ниже пример считывания значений с пульта:
+```c++
+#define JX1 A0
+#define JY1 A1
+#define JX2 A2
+#define JY2 A3
+#define P A4
+#define T 2
+
+
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(A0, INPUT);
+  pinMode(A1, INPUT);
+  pinMode(A2, INPUT);
+  pinMode(A3, INPUT);
+  pinMode(A4, INPUT);
+  pinMode(2, INPUT);
+}
+
+void loop() {
+  int jx1Val = analogRead(JX1);
+  int jy1Val = analogRead(JY1);
+  int jx2Val = analogRead(JX2);
+  int jy2Val = analogRead(JY2);
+  int p = analogRead(P);
+  int t = digitalRead(T);
+  
+  Serial.println(String(jx1Val) + " " + String(jy1Val) + " " + String(jx2Val) + " " + String(jy2Val) + " " + String(p) + " " + String(t));
+}
+```
+
 
 
 
