@@ -294,7 +294,7 @@ void loop(){
 
 
 
-Пример управления роботом при помощи ИК-пульта:
+Пример управления роботом при помощи ИК-пульта (непрерывный режим - робот выполняет команду до постепления новой):
 
 ```c++
 #include <IRremote.hpp>
@@ -390,6 +390,119 @@ void loop(){
 }
 ```
 
+Пример управления роботом при помощи ИК-пульта (дискретный режим - робот выполняет команду только в течение заданного времени timeout, а затем останавливается):
+
+```c++
+#include <IRremote.hpp>
+
+#define IR_RECEIVE_PIN 2
+#define IR_BUTTON_FORWARD 27
+#define IR_BUTTON_BACKWARD 26
+#define IR_BUTTON_RIGHT 6
+#define IR_BUTTON_LEFT 4
+#define IR_BUTTON_MENU 5
+#define IR_BUTTON_POWER 18
+
+#define RELAY_PIN 3
+
+#define SPEED_1      5 
+#define DIR_1        4
+ 
+#define SPEED_2      6
+#define DIR_2        7
+
+bool weaponState = false;
+int timeout = 80;
+
+void setup(){
+  Serial.begin(9600);
+  pinMode(IR_RECEIVE_PIN, INPUT);
+  pinMode(RELAY_PIN, OUTPUT);
+  IrReceiver.begin(IR_RECEIVE_PIN);
+
+  for (int i = 4; i < 8; i++) {     
+    pinMode(i, OUTPUT);
+  }
+}
+
+void loop(){
+   if (IrReceiver.decode()) {
+      IrReceiver.resume(); // Enable receiving of the next value
+      int command = IrReceiver.decodedIRData.command;
+      
+      switch (command) {
+        case IR_BUTTON_FORWARD: {
+          digitalWrite(DIR_1, LOW); // set direction
+          analogWrite(SPEED_1, 255); // set speed
+
+          digitalWrite(DIR_2, LOW); // set direction
+          analogWrite(SPEED_2, 255); // set speed
+
+          delay(timeout);
+          analogWrite(SPEED_1, 0); 
+          analogWrite(SPEED_2, 0);          
+
+          break;
+        }
+        case IR_BUTTON_BACKWARD: {
+          digitalWrite(DIR_1, HIGH); // set direction
+          analogWrite(SPEED_1, 255); // set speed
+
+          digitalWrite(DIR_2, HIGH); // set direction
+          analogWrite(SPEED_2, 255); // set speed
+
+          delay(timeout);
+          analogWrite(SPEED_1, 0); 
+          analogWrite(SPEED_2, 0);  
+
+          break;
+        }
+        case IR_BUTTON_RIGHT: { // stop mototrs
+          digitalWrite(DIR_1, HIGH); // set direction
+          analogWrite(SPEED_1, 255); // set speed
+
+          digitalWrite(DIR_2, LOW); // set direction
+          analogWrite(SPEED_2, 255); // set speed
+
+          delay(timeout);
+          analogWrite(SPEED_1, 0); 
+          analogWrite(SPEED_2, 0);  
+
+          break;
+        }
+        case IR_BUTTON_LEFT: { 
+          digitalWrite(DIR_1, LOW); // set direction
+          analogWrite(SPEED_1, 255); // set speed
+
+          digitalWrite(DIR_2, HIGH); // set direction
+          analogWrite(SPEED_2, 255); // set speed
+
+          delay(timeout);
+          analogWrite(SPEED_1, 0); 
+          analogWrite(SPEED_2, 0);  
+          
+          break;
+        }
+        case IR_BUTTON_MENU: { // stop mototrs
+          analogWrite(SPEED_1, 0); 
+          analogWrite(SPEED_2, 0);  
+          break;
+        }
+        case IR_BUTTON_POWER: { // stop mototrs
+          weaponState = !weaponState;
+          if (weaponState) {
+            digitalWrite(RELAY_PIN, HIGH);            
+          }
+          else {
+            digitalWrite(RELAY_PIN, LOW);                        
+          }
+          break;
+        }
+      }
+  }
+}
+
+```
 ---
 
 ### Plan B4: пульт управления на проводе
