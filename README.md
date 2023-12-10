@@ -299,12 +299,15 @@ void loop(){
 ```c++
 #include <IRremote.hpp>
 
-#define IR_RECEIVE_PIN 0
-#define IR_BUTTON_PLUS 21
-#define IR_BUTTON_MINUS 7
-#define IR_BUTTON_CH_PLUS 71
-#define IR_BUTTON_CH_MINUS 69
-#define IR_BUTTON_PLAY_PAUSE 67
+#define IR_RECEIVE_PIN 2
+#define IR_BUTTON_FORWARD 27
+#define IR_BUTTON_BACKWARD 26
+#define IR_BUTTON_RIGHT 6
+#define IR_BUTTON_LEFT 4
+#define IR_BUTTON_MENU 5
+#define IR_BUTTON_POWER 18
+
+#define RELAY_PIN 3
 
 #define SPEED_1      5 
 #define DIR_1        4
@@ -312,8 +315,12 @@ void loop(){
 #define SPEED_2      6
 #define DIR_2        7
 
+bool weaponState = false;
+
 void setup(){
   Serial.begin(9600);
+  pinMode(IR_RECEIVE_PIN, INPUT);
+  pinMode(RELAY_PIN, OUTPUT);
   IrReceiver.begin(IR_RECEIVE_PIN);
 
   for (int i = 4; i < 8; i++) {     
@@ -327,7 +334,7 @@ void loop(){
       int command = IrReceiver.decodedIRData.command;
       
       switch (command) {
-        case IR_BUTTON_PLUS: {
+        case IR_BUTTON_FORWARD: {
           digitalWrite(DIR_1, LOW); // set direction
           analogWrite(SPEED_1, 255); // set speed
 
@@ -336,7 +343,7 @@ void loop(){
 
           break;
         }
-        case IR_BUTTON_MINUS: {
+        case IR_BUTTON_BACKWARD: {
           digitalWrite(DIR_1, HIGH); // set direction
           analogWrite(SPEED_1, 255); // set speed
 
@@ -345,7 +352,7 @@ void loop(){
 
           break;
         }
-        case IR_BUTTON_CH_PLUS: { // stop mototrs
+        case IR_BUTTON_RIGHT: { // stop mototrs
           digitalWrite(DIR_1, HIGH); // set direction
           analogWrite(SPEED_1, 255); // set speed
 
@@ -354,7 +361,7 @@ void loop(){
 
           break;
         }
-        case IR_BUTTON_CH_MINUS: { 
+        case IR_BUTTON_LEFT: { 
           digitalWrite(DIR_1, LOW); // set direction
           analogWrite(SPEED_1, 255); // set speed
 
@@ -363,9 +370,19 @@ void loop(){
           
           break;
         }
-        case IR_BUTTON_PLAY_PAUSE: { // stop mototrs
+        case IR_BUTTON_MENU: { // stop mototrs
           analogWrite(SPEED_1, 0); 
           analogWrite(SPEED_2, 0);  
+          break;
+        }
+        case IR_BUTTON_POWER: { // stop mototrs
+          weaponState = !weaponState;
+          if (weaponState) {
+            digitalWrite(RELAY_PIN, HIGH);            
+          }
+          else {
+            digitalWrite(RELAY_PIN, LOW);                        
+          }
           break;
         }
       }
