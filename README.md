@@ -172,7 +172,7 @@ Arduino Uno подключается к Raspberry Pi по Serial (через п�
 | a                    | 2                 |
 | s                    | 3                 |
 | x                    | 4                 |
-| backspace            | 5                 |
+| space                | 5                 |
 | enter                | 6                 |
 
 Пример обработки сигнала на Arduino для управления направлением движения робота:
@@ -464,6 +464,8 @@ void loop(){
 ```
 
 [VNC viewer для подключения к Raspberry Pi](https://www.realvnc.com/en/connect/download/viewer/)
+
+[IP Scanner](https://www.advanced-ip-scanner.com/ru/)
 
 ---
 
