@@ -464,7 +464,7 @@ void loop(){
 ```
 List ports:
 ```bash
-ls dev/tty*
+ls /dev/tty*
 ```
 
 
