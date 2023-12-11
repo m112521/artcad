@@ -462,6 +462,11 @@ void loop(){
   }
 }
 ```
+List ports:
+```bash
+ls dev/tty*
+```
+
 
 [VNC viewer для подключения к Raspberry Pi](https://www.realvnc.com/en/connect/download/viewer/)
 
