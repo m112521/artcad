@@ -21,9 +21,9 @@ def on_press(key):
             ser.write(b'3')
         elif key.char == 'x':
             ser.write(b'4')
-        elif key.char == 'backspace':
+        elif key.char == 'z':
             ser.write(b'5')
-        elif key.char == 'enter':
+        elif key.char == 'm':
             ser.write(b'6')
 
     except AttributeError:
