@@ -1,8 +1,7 @@
 # artcad robot test
 
-[Инструкция ](https://drive.google.com/file/d/1U5eLFzV6H8NR3o3LD1IKxW2EKsxH2cex/view?usp=sharing)
+[Инструкция ](https://github.com/m112521/artcad/blob/main/ARTCAD2025.pdf)
 
-[BOM](https://docs.google.com/spreadsheets/d/125n-HQTKvdkcZM3G1kUShieqFLzIgVuq7u4Gp4bA2KU/edit?usp=sharing)
 
 Робот и пульт управления:
 
