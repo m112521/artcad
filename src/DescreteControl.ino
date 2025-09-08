@@ -3,12 +3,7 @@
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include <Arduino_JSON.h>
-#include <Adafruit_NeoPixel.h>
 
-#define PIN_NEO_PIXEL  16 
-#define NUM_PIXELS     16 
-
-Adafruit_NeoPixel NeoPixel(NUM_PIXELS, PIN_NEO_PIXEL, NEO_GRB + NEO_KHZ800);
 
 #define AIN1 13 // ESP32 Pin D13 to TB6612FNG Pin AIN1
 #define BIN1 12 // ESP32 Pin D12 to TB6612FNG Pin BIN1
@@ -18,8 +13,8 @@ Adafruit_NeoPixel NeoPixel(NUM_PIXELS, PIN_NEO_PIXEL, NEO_GRB + NEO_KHZ800);
 #define PWMB 25 // ESP32 Pin D25 to TB6612FNG Pin PWMB
 #define STBY 33 // ESP32 Pin D33 to TB6612FNG Pin STBY
 
-const char* ssid = "bots2024";
-const char* password = "bots12345";
+const char* ssid = "artcad2025";
+const char* password = "bot12345678";
 
 #define RELAY_PIN 15 // pin G15
 
@@ -313,7 +308,6 @@ void initWebSocket() {
 
 void setup()
 {
-  NeoPixel.begin(); 
   Serial.begin(115200);
   pinMode(RELAY_PIN, OUTPUT);  
 
@@ -327,18 +321,6 @@ void setup()
 
 void loop()
 {
-  if (led == 1) {
-    for (int pixel = 0; pixel < NUM_PIXELS; pixel++) {          
-      NeoPixel.setPixelColor(pixel, NeoPixel.Color(255, 255, 255));
-    }
-    NeoPixel.show();
-  }
-  else {
-    NeoPixel.clear();
-    NeoPixel.show();
-  }
-
-
   if (fire == 1) {
     digitalWrite(RELAY_PIN, HIGH);
   }
