@@ -10,7 +10,7 @@ FILE_DESCRIPTION(
 /* implementation_level */ '2;1');
 
 FILE_NAME(
-/* name */ 'HUY',
+/* name */ 'H',
 /* time_stamp */ '2025-11-29T19:47:11+03:00',
 /* author */ (''),
 /* organization */ (''),
@@ -2368,3 +2368,4 @@ REPRESENTATION_CONTEXT('ID1','3D')
 #1829=CARTESIAN_POINT('',(0.,0.,0.));
 ENDSEC;
 END-ISO-10303-21;
+
