@@ -107,7 +107,7 @@ const char index_html[] PROGMEM = R"rawliteral(
             <button class="div-s" id="btn-sp">STOP</button>
         </div>
     </div>
-    <div class="div3"><button class="circ-btn" id="btn-fire">LAUNCH</button><button class="circ-btn" id="btn-led">LED</button></div>
+    <div class="div3"><button class="circ-btn" id="btn-fire">LAUNCH</button><button class="circ-btn" id="btn-led">SERVO</button></div>
 </div>
 
 <script>
@@ -313,7 +313,7 @@ void setup()
 
 void loop()
 {
-  // при нажатии на кнопку LED на смартфоне
+  // при нажатии на кнопку SERVO на смартфоне
   if (led == 1) {
     servo1.write(180); // поворот сервы на 180 градусов
   }
